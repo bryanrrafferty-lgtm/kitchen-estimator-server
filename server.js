@@ -1,3 +1,4 @@
+    // Failed to connect to MongoDB
 // ========================
 // Imports & App Setup
 // ========================
@@ -302,6 +303,38 @@ app.get('/api/project-summaries', async (req, res) => {
 });
 
 // --- INVENTORY ---
+// --- DAILY TOTALS REPORTING ---
+app.get('/api/daily-totals', async (req, res, next) => {
+    try {
+        const { projectKey, startDate, endDate } = req.query;
+        if (!projectKey || !startDate || !endDate) {
+            return res.status(400).json({ error: 'Missing projectKey, startDate, or endDate' });
+        }
+        const dailyTotalsCollection = db.collection('dailyTotals');
+        // Debug log query params
+        console.log('[dailyTotals] Query:', { projectKey, startDate, endDate });
+        // Dates are in YYYY-MM-DD format
+        const query = {
+            projectId: projectKey,
+            date: { $gte: startDate, $lte: endDate }
+        };
+        console.log('[dailyTotals] MongoDB Query:', query);
+        const items = await dailyTotalsCollection.find(query).toArray();
+        console.log('[dailyTotals] Results:', items);
+        res.json(items);
+    } catch (err) {
+        next(err);
+    }
+});
+// Get all inventory items
+app.get('/api/inventory/all', async (req, res, next) => {
+    try {
+        const items = await inventoryCollection.find({}).toArray();
+        res.json(items);
+    } catch (err) {
+        next(err);
+    }
+});
 
 app.get('/api/inventory/:type', async (req, res, next) => {
     try {
@@ -339,14 +372,67 @@ app.get('/api/inventory/:type/:id', async (req, res, next) => {
 
 app.patch('/api/inventory/:id', async (req, res, next) => {
     try {
-            const { id } = req.params;
-            const updateData = req.body;
-            const result = await inventoryCollection.updateOne(
-                { _id: new ObjectId(id) },
-                { $set: updateData }
-            );
-            if (result.matchedCount === 0) return res.status(404).json({ error: 'Item not found' });
-            res.json({ message: 'Item updated' });
+        const { id } = req.params;
+        const updateData = req.body;
+        const log = (...args) => console.log('[dailyTotals]', ...args);
+        // If type is being changed, set movedDate to today and store full item data in dailyTotals
+        if (updateData.type) {
+            // Use Arizona time (America/Phoenix) for movedDate
+            const arizonaDate = new Date().toLocaleString('en-US', { timeZone: 'America/Phoenix' });
+            // Format as YYYY-MM-DDTHH:mm:ss (ISO-like, but local time)
+            const [datePart, timePart] = arizonaDate.split(', ');
+            const [month, day, year] = datePart.split('/');
+            const movedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${timePart}`;
+            updateData.movedDate = movedDate;
+            // Fetch full item data before update
+            const item = await inventoryCollection.findOne({ _id: new ObjectId(id) });
+            if (item) {
+                const dailyTotalsCollection = db.collection('dailyTotals');
+                const today = movedDate.slice(0, 10);
+                await dailyTotalsCollection.insertOne({
+                    date: today,
+                    itemId: item._id,
+                    projectId: item.projectId || item.project_key || item.projectKey,
+                    customer: item.customer,
+                    projectName: item.projectName,
+                    supplierId: item.supplierId,
+                    itemType: item.itemType,
+                    modelNumber: item.modelNumber,
+                    quantity: item.quantity,
+                    itemNumber: item.itemNumber,
+                    location: item.location,
+                    squareft: item.squareft,
+                    weight: item.weight,
+                    previousType: item.type,
+                    newType: updateData.type,
+                    movedDate: movedDate
+                });
+                log('Inserted dailyTotals:', {
+                    date: today,
+                    itemId: item._id,
+                    projectId: item.projectId || item.project_key || item.projectKey,
+                    customer: item.customer,
+                    projectName: item.projectName,
+                    supplierId: item.supplierId,
+                    itemType: item.itemType,
+                    modelNumber: item.modelNumber,
+                    quantity: item.quantity,
+                    itemNumber: item.itemNumber,
+                    location: item.location,
+                    squareft: item.squareft,
+                    weight: item.weight,
+                    previousType: item.type,
+                    newType: updateData.type,
+                    movedDate: movedDate
+                });
+            }
+        }
+        const result = await inventoryCollection.updateOne(
+            { _id: new ObjectId(id) },
+            { $set: updateData }
+        );
+        if (result.matchedCount === 0) return res.status(404).json({ error: 'Item not found' });
+        res.json({ message: 'Item updated' });
     } catch (err) {
         next(err);
     }

@@ -19,7 +19,6 @@ async function moveToShipping(itemId) {
         loadInventory('Inventory');
         loadInventory('Shipping');
     } catch (err) {
-        showMessage('Error: ' + err.message, 'error');
     }
 }
 window.moveToShipping = moveToShipping;
@@ -44,15 +43,24 @@ window.moveToReceiving = moveToReceiving;
 // Move item to Inventory from Receiving
 async function moveToInventory(itemId) {
     try {
+        // Fetch current item data to preserve squareft
+        const itemRes = await fetch(`${API_BASE}/inventory/Receiving/${itemId}`);
+        if (!itemRes.ok) throw new Error('Failed to fetch item data');
+        const item = await itemRes.json();
+        const patchData = { type: 'Inventory', squareft: item.squareft };
         const response = await fetch(`${API_BASE}/inventory/${itemId}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ type: 'Inventory' })
+            body: JSON.stringify(patchData)
         });
         if (!response.ok) throw new Error('Failed to move item to Inventory');
         showMessage('Item moved to Inventory.', 'success');
         loadInventory('Receiving');
         loadInventory('Inventory');
+        await updateSquareFtSummary();
+        console.log('After moveToInventory: selectedProjectKey =', window.selectedProjectKey);
+        console.log('projectSquareFtSummary =', window.projectSquareFtSummary);
+        updateSidebarSquareFt();
     } catch (err) {
         showMessage('Error: ' + err.message, 'error');
     }
@@ -372,6 +380,8 @@ async function updateSquareFtSummary() {
     const total = allItems.reduce((sum, i) => sum + Number(i.squareft || 0), 0);
 
     // Received is the sum of squareft for all items NOT in Receiving (i.e., in Inventory or Shipping)
+    console.log('Inventory items for project', selectedProjectKey, ':', inventory.map(i => ({id: i._id, squareft: i.squareft})));
+    console.log('Shipping items for project', selectedProjectKey, ':', shipping.map(i => ({id: i._id, squareft: i.squareft})));
     const received = inventory.concat(shipping).reduce((sum, i) => sum + Number(i.squareft || 0), 0);
 
     projectSquareFtSummary[selectedProjectKey] = { total, received };

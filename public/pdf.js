@@ -460,6 +460,13 @@ export async function generateReceiptConfirmation(data) {
             },
             margin: { left: marginLeft, right: marginRight }
         });
+        // Signature line and date (same as Packing List PDF)
+        const finalY = doc.lastAutoTable.finalY || (infoTableY + 7);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        const dateStr = new Date().toLocaleDateString('en-US', { timeZone: 'MST' });
+        doc.text('Signature: ______________________________________________', marginLeft, finalY + 20, { align: 'left' });
+        doc.text(dateStr, pageWidth - marginRight, finalY + 20, { align: 'right' });
         // Close modal if open
         const receiptModal = document.getElementById('receiptConfirmationModal');
         if (receiptModal) {

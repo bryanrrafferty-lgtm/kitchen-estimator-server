@@ -5,35 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Whiteboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
     <style>
     .pdf-link-btn {
         font-size: 0.95rem !important;
     }
-        .dropzone-blue {
-            border: 2px dashed #0d6efd;
-            border-radius: 8px;
-            padding: 1rem 0.5rem;
-            margin: 1.5rem 0 1.5rem 0;
-            text-align: center;
-            background: #e3f0ff;
-            color: #0d6efd;
-            cursor: pointer;
-            font-size: 1.1rem;
-            min-height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(13, 110, 253, 0.12);
-            transition: background 0.2s, box-shadow 0.2s;
-            z-index: 2;
-            font-weight: 600;
-        }
-    .sidebar-totals { width: 356px; background: #f8f9fa; border-right: 1px solid #e0e0e0; padding: 2rem 1rem 1rem 1rem; box-shadow: 2px 0 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; align-items: flex-start; position: sticky; top: 0; max-height: 100vh; height: 100vh; z-index: 10; border-top-right-radius: 18px; border-bottom-right-radius: 18px; overflow-y: auto; }
     .totals-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 1rem; color: #007bff; }
     .totals-list { list-style: none; padding: 0; margin: 0; width: 100%; }
-    .totals-list li { margin-bottom: 0.75rem; font-size: 1.05rem; display: flex; justify-content: space-between; }
-    .totals-label { font-weight: 500; color: #555; }
-    .totals-value { font-weight: bold; color: #007bff; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background-color: #f4f7fa; color: #333; }
         .layout-flex { display: flex; flex-direction: row; min-height: 100vh; }
         .active-projects-label { font-weight: 500; color: #555; margin-top: 1.5rem; margin-bottom: 0.25rem; font-size: 1.05rem; }
@@ -111,44 +89,44 @@
             vertical-align: middle;
             margin: 0 auto;
         }
-        @media (max-width: 900px) {
-            .layout-flex { flex-direction: column; }
-            .sidebar-totals { width: 100%; height: auto; border-right: none; border-bottom: 1px solid #e0e0e0; flex-direction: row; align-items: flex-start; position: static; box-shadow: none; padding: 1rem 1rem 0.5rem 1rem; }
-            .main-content { padding: 0; }
-        }
     </style>
 </head>
 <body>
-    <div class="layout-flex">
-        <aside class="sidebar-totals">
-            <div class="totals-title">Totals</div>
-            <ul class="totals-list">
-                <li><span class="totals-label">Total</span> <span class="totals-value" id="total-total">0.00</span></li>
-                <li><span class="totals-label">Received</span> <span class="totals-value" id="total-received">0.00</span></li>
-                <li><span class="totals-label">Balance</span> <span class="totals-value" id="total-balance">0.00</span></li>
-            </ul>
-            <div class="active-projects-flex">
-                <span class="active-projects-label">Active Projects</span>
-                <span class="active-projects-value" id="active-projects-count">0</span>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 sidebar">
+                <!-- Logo and title removed from sidebar -->
+                <div class="sidebar-section">
+                    <h5>Totals</h5>
+                    <ul class="totals-list mb-section">
+                        <li><span class="totals-label">Total</span> <span class="totals-value" id="total-total">0.00</span></li>
+                        <li><span class="totals-label">Received</span> <span class="totals-value" id="total-received">0.00</span></li>
+                        <li><span class="totals-label">Balance</span> <span class="totals-value" id="total-balance">0.00</span></li>
+                        <li><span class="totals-label">Daily</span> <span class="totals-value" id="total-daily">0.00</span></li>
+                    </ul>
+                </div>
+                <div class="sidebar-section">
+                    <span class="active-projects-label">Active Projects</span>
+                    <span class="active-projects-value" id="active-projects-count">0</span>
+                </div>
+                <div class="sidebar-section">
+                    <div id="receiving-reports-dropzone" class="dropzone-blue mb-2">
+                        Drag &amp; Drop Receiving Report
+                    </div>
+                    <ul id="receiving-reports-list" class="list-unstyled mb-0">
+                        <li class="list-loading">Loading...</li>
+                    </ul>
+                </div>
+                <div class="sidebar-section">
+                    <div id="po-dropzone" class="dropzone-blue mb-2">
+                        Drag &amp; Drop Purchase Order
+                    </div>
+                    <ul id="po-list" class="list-unstyled mb-0">
+                        <li class="list-loading">Loading...</li>
+                    </ul>
+                </div>
             </div>
-            <!-- Add these drop zones just above each list in your sidebar: -->
-            <div id="receiving-reports-dropzone" class="dropzone-blue">
-                Drag &amp; Drop Receiving Report
-            </div>
-            <ul id="receiving-reports-list" class="list-unstyled mb-0">
-                <li class="list-loading">Loading...</li>
-            </ul>
-
-            <div id="po-dropzone"
-                 class="dropzone-blue">
-                Drag &amp; Drop Purchase Order
-            </div>
-            <ul id="po-list" class="list-unstyled mb-0">
-                <li class="list-loading">Loading...</li>
-            </ul>
-        </aside>
-        <div class="main-content">
-            <div class="container py-4">
+            <div class="col-md-9">
                 <div class="center-header">
                     <div class="d-flex align-items-center justify-content-center gap-3">
                         <div class="logo-circle mb-0">
@@ -158,6 +136,11 @@
                     </div>
                 </div>
                 <div class="card shadow-sm p-3">
+                    <!-- Invoice Buttons (moved to left above table) -->
+                    <div class="d-flex justify-content-start mb-3">
+                        <button class="btn btn-success me-2" id="openInvoiceModalBtn">Monthly Storage</button>
+                        <button class="btn btn-primary" id="openOutboundInvoiceBtn">Outbound Invoice</button>
+                    </div>
                     <div class="table-responsive" id="projectList">
                         <table class="table table-striped table-hover align-middle">
                             <thead>
@@ -175,13 +158,268 @@
                             <tbody></tbody>
                         </table>
                     </div>
+                    <!-- Invoice Modal -->
+                    <div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="invoiceModalLabel">Generate Invoice</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="invoiceProjectSelect" class="form-label">Project</label>
+                                        <select class="form-select" id="invoiceProjectSelect"></select>
+                                    </div>
+                                    <div id="monthlyFields">
+                                        <div class="mb-3">
+                                            <label for="invoiceStartDate" class="form-label">Start Date</label>
+                                            <input type="date" class="form-control" id="invoiceStartDate">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="invoiceEndDate" class="form-label">End Date</label>
+                                            <input type="date" class="form-control" id="invoiceEndDate">
+                                        </div>
+                                    </div>
+                                    <div id="outboundFields" style="display:none;">
+                                        <div class="mb-3">
+                                            <label for="deliveryPrice" class="form-label">Delivery Price</label>
+                                            <input type="number" class="form-control" id="deliveryPrice" min="0" step="0.01" value="400.00">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-primary" id="generateInvoiceBtn">Generate</button>
+                                    <button type="button" class="btn btn-primary" id="generateOutboundInvoiceBtn" style="display:none;">Generate</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
     <script src="https://unpkg.com/jspdf-autotable@latest/dist/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Invoice Modal Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            let invoiceProjects = [];
+            const invoiceModalEl = document.getElementById('invoiceModal');
+            const invoiceBtn = document.getElementById('openInvoiceModalBtn');
+            // Button definitions
+            const outboundBtn = document.getElementById('openOutboundInvoiceBtn');
+            // Monthly Storage button logic
+            invoiceBtn.addEventListener('click', async function() {
+                // Show modal, show monthly fields, hide outbound fields
+                const monthlyFields = document.getElementById('monthlyFields');
+                const outboundFields = document.getElementById('outboundFields');
+                const generateInvoiceBtn = document.getElementById('generateInvoiceBtn');
+                const generateOutboundInvoiceBtn = document.getElementById('generateOutboundInvoiceBtn');
+                if (monthlyFields) monthlyFields.style.display = '';
+                if (outboundFields) outboundFields.style.display = 'none';
+                if (generateInvoiceBtn) generateInvoiceBtn.style.display = '';
+                if (generateOutboundInvoiceBtn) generateOutboundInvoiceBtn.style.display = 'none';
+                // Fetch active projects for dropdown
+                const res = await fetch('/api/project-summaries');
+                invoiceProjects = await res.json();
+                const invoiceProjectSelect = document.getElementById('invoiceProjectSelect');
+                invoiceProjectSelect.innerHTML = '';
+                invoiceProjects.forEach(p => {
+                    const key = p.project_key || p.projectId || p.projectKey;
+                    const opt = document.createElement('option');
+                    opt.value = key;
+                    opt.textContent = `${p.customer || ''} - ${p.projectName || key}`;
+                    invoiceProjectSelect.appendChild(opt);
+                });
+                const modal = new bootstrap.Modal(document.getElementById('invoiceModal'));
+                modal.show();
+            });
+            // Outbound Invoice button logic
+            outboundBtn.addEventListener('click', async function() {
+                // Show modal, hide monthly fields, show outbound fields
+                const monthlyFields = document.getElementById('monthlyFields');
+                const outboundFields = document.getElementById('outboundFields');
+                const generateInvoiceBtn = document.getElementById('generateInvoiceBtn');
+                const generateOutboundInvoiceBtn = document.getElementById('generateOutboundInvoiceBtn');
+                if (monthlyFields) monthlyFields.style.display = 'none';
+                if (outboundFields) outboundFields.style.display = '';
+                if (generateInvoiceBtn) generateInvoiceBtn.style.display = 'none';
+                if (generateOutboundInvoiceBtn) generateOutboundInvoiceBtn.style.display = '';
+                // Fetch active projects for dropdown
+                const res = await fetch('/api/project-summaries');
+                const projects = await res.json();
+                const invoiceProjectSelect = document.getElementById('invoiceProjectSelect');
+                invoiceProjectSelect.innerHTML = '';
+                projects.forEach(p => {
+                    const key = p.project_key || p.projectId || p.projectKey;
+                    const opt = document.createElement('option');
+                    opt.value = key;
+                    opt.textContent = `${p.customer || ''} - ${p.projectName || key}`;
+                    invoiceProjectSelect.appendChild(opt);
+                });
+                const modal = new bootstrap.Modal(document.getElementById('invoiceModal'));
+                modal.show();
+            });
+            // Outbound Invoice modal generate button
+            document.getElementById('generateOutboundInvoiceBtn').addEventListener('click', async function() {
+                const projectKey = document.getElementById('invoiceProjectSelect').value;
+                const deliveryPrice = Number(document.getElementById('deliveryPrice').value) || 0;
+                if (!projectKey) {
+                    alert('Please select a project.');
+                    return;
+                }
+                // Get all inventory items
+                const res = await fetch('/api/inventory/all');
+                const items = res.ok ? await res.json() : [];
+                // Filter for Shipping tab items for selected project
+                const shippingItems = items.filter(i => (i.type === 'Shipping') && (i.project_key === projectKey || i.projectKey === projectKey || i.projectId === projectKey));
+                if (!shippingItems.length) {
+                    alert('No Shipping items found for this project.');
+                    return;
+                }
+                // Get project info
+                let projectInfo = {};
+                const projectRes = await fetch(`/api/projects/${encodeURIComponent(projectKey)}`);
+                if (projectRes.ok) projectInfo = await projectRes.json();
+                generateOutboundInvoicePDF(projectInfo, shippingItems, deliveryPrice);
+                bootstrap.Modal.getInstance(document.getElementById('invoiceModal')).hide();
+            });
+        // Outbound Invoice PDF generation
+    async function generateOutboundInvoicePDF(project, items, deliveryPrice) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            let y = 12;
+            // Logo
+            let logoDataUrl = '';
+            try {
+                logoDataUrl = await getImageBase64('CKS Logo.png');
+            } catch { logoDataUrl = ''; }
+            if (logoDataUrl) doc.addImage(logoDataUrl, 'PNG', 14, y, 22, 22);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(0,0,0);
+            doc.setFontSize(13);
+            doc.text('Commercial Kitchen Solutions', 38, y + 7);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.text('Outbound Invoice', 38, y + 14);
+            doc.text(`Project: ${project.customer || ''} - ${project.projectName || project.project_key || ''}`, 14, y + 30);
+            doc.text(`Date: ${(new Date()).toISOString().slice(0,10)}`, 14, y + 36);
+            // Table
+            const tableBody = items.map(item => [
+                item.itemNumber || '',
+                item.supplierId || '',
+                item.itemType || '',
+                item.modelNumber || '',
+                item.quantity || '',
+                item.weight || '',
+                item.movedDate ? item.movedDate.slice(0, 10) : ''
+            ]);
+            doc.autoTable({
+                head: [['Item #', 'Supplier', 'Item', 'Model', 'Qty', 'Weight', 'Date Shipped']],
+                body: tableBody,
+                startY: y + 40,
+                theme: 'grid',
+                styles: { fontSize: 9 },
+                headStyles: {
+                    fillColor: [135, 113, 78], // PMS 872 gold
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold',
+                    fontSize: 10
+                }
+            });
+            // Total weight and billing
+            const totalWeight = items.reduce((sum, i) => sum + Number(i.weight || 0), 0);
+            const billing = (totalWeight * 0.05).toFixed(2);
+            doc.text(`Total Weight: ${totalWeight.toFixed(2)} lbs`, 14, doc.lastAutoTable.finalY + 10);
+            doc.text(`Outbound Billing (@ $0.05/lb): $${billing}`, 14, doc.lastAutoTable.finalY + 16);
+            doc.text(`Delivery Price: $${deliveryPrice.toFixed(2)}`, 14, doc.lastAutoTable.finalY + 22);
+            doc.text(`Total Due: $${(Number(billing) + deliveryPrice).toFixed(2)}`, 14, doc.lastAutoTable.finalY + 28);
+            doc.save(`Outbound_Invoice_${project.projectName || project.project_key || 'All'}_${(new Date()).toISOString().slice(0,10)}.pdf`);
+        }
+            document.getElementById('generateInvoiceBtn').addEventListener('click', async function() {
+                console.log('[Monthly Storage] Generate button clicked');
+                try {
+                const projectKey = invoiceProjectSelect.value;
+                const startDate = document.getElementById('invoiceStartDate').value;
+                const endDate = document.getElementById('invoiceEndDate').value;
+                console.log('[Monthly Storage] Selected:', { projectKey, startDate, endDate });
+                if (!projectKey || !startDate || !endDate) {
+                    alert('Please select a project and both dates.');
+                    return;
+                }
+                // Fetch items for project from dailyTotals
+                const res = await fetch(`/api/daily-totals?projectKey=${encodeURIComponent(projectKey)}&startDate=${startDate}&endDate=${endDate}`);
+                const items = await res.json();
+                console.log('[Monthly Storage] Invoice PDF items:', items);
+                if (!items.length) {
+                    alert('No items found for the selected project and date range.');
+                    return;
+                }
+                // Generate PDF (packing list style)
+                // Find project by any key
+                const projectObj = invoiceProjects.find(p => p.project_key === projectKey || p.projectId === projectKey || p.projectKey === projectKey);
+                console.log('[Monthly Storage] Project object:', projectObj);
+                generateInvoicePDF(projectObj, items, startDate, endDate);
+                bootstrap.Modal.getInstance(invoiceModalEl).hide();
+                } catch (err) {
+                    alert('Error generating invoice: ' + err.message);
+                }
+            });
+        });
+
+        async function generateInvoicePDF(project, items, startDate, endDate) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            let y = 12;
+            // Logo
+            let logoDataUrl = '';
+            try {
+                logoDataUrl = await getImageBase64('CKS Logo.png');
+            } catch { logoDataUrl = ''; }
+            if (logoDataUrl) doc.addImage(logoDataUrl, 'PNG', 14, y, 22, 22);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(0,0,0);
+            doc.setFontSize(13);
+            doc.text('Commercial Kitchen Solutions', 38, y + 7);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.text('Invoice for Storage', 38, y + 14);
+            doc.text(`Project: ${project.customer || ''} - ${project.projectName || project.project_key}`, 14, y + 30);
+            doc.text(`Date Range: ${startDate} to ${endDate}`, 14, y + 36);
+            // Table
+            const tableBody = items.map(item => [
+                item.itemNumber || '',
+                item.supplierId || '',
+                item.itemType || '',
+                item.modelNumber || '',
+                item.quantity || '',
+                item.squareft || '',
+                item.weight || '',
+                item.movedDate ? item.movedDate.slice(0, 10) : ''
+            ]);
+            doc.autoTable({
+                head: [['Item #', 'Supplier', 'Item', 'Model', 'Qty', 'Sq Ft', 'Weight', 'Date Moved']],
+                body: tableBody,
+                startY: y + 40,
+                theme: 'grid',
+                styles: { fontSize: 9 },
+                headStyles: {
+                    fillColor: [135, 113, 78], // PMS 872 gold
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold',
+                    fontSize: 10
+                }
+            });
+            // Total sq ft and billing
+            const totalSqFt = items.reduce((sum, i) => sum + Number(i.squareft || 0), 0);
+            const billing = (totalSqFt * 3).toFixed(2);
+            doc.text(`Total Sq Ft: ${totalSqFt.toFixed(2)}`, 14, doc.lastAutoTable.finalY + 10);
+            doc.text(`Monthly Billing (@ $3.00/sq ft): $${billing}`, 14, doc.lastAutoTable.finalY + 16);
+            doc.save(`Invoice_${project.projectName || project.project_key}_${startDate}_to_${endDate}.pdf`);
+        }
         function getStatusClass(status) {
             switch ((status || '').toUpperCase()) {
                 case 'UP TO DATE': return 'status-up-to-date';
@@ -203,6 +441,22 @@
         }
 
         async function loadProjects() {
+                // Fetch all inventory items and group by project for received calculation
+                let dailyReceived = 0;
+                let inventoryItems = [];
+                try {
+                    let inventoryRes = await fetch('/api/inventory/all');
+                    inventoryItems = inventoryRes.ok ? await inventoryRes.json() : [];
+                    console.log('Fetched inventory items:', inventoryItems);
+                    let today = new Date().toISOString().slice(0, 10);
+                    inventoryItems.forEach(item => {
+                        if ((item.type === 'Receiving' || item.type === 'Inventory') && item.movedDate && item.movedDate.slice(0, 10) === today) {
+                            dailyReceived += Number(item.squareft) || 0;
+                        }
+                    });
+                } catch (err) {
+                    dailyReceived = 0;
+                }
             try {
                 const response = await fetch('/api/project-summaries');
                 if (!response.ok) throw new Error('Failed to fetch project summaries');
@@ -218,34 +472,56 @@
                 });
                 const tbody = document.querySelector('table tbody');
                 tbody.innerHTML = '';
-                let totalTotal = 0, totalReceived = 0, totalBalance = 0, activeProjects = 0;
+                let totalTotal = 0, totalReceived = 0, totalBalance = 0;
+                let today = new Date().toISOString().slice(0, 10);
+                let storedDay = localStorage.getItem('dailySqFtDay');
+                let dailySqFt = storedDay === today ? Number(localStorage.getItem('dailySqFt')) || 0 : 0;
+
+                // Calculate totals using inventoryItems for each project
+                let totalSqFt = 0, receivedSqFt = 0, balanceSqFt = 0;
+                let activeProjects = 0;
                 projects.forEach(project => {
+                    const projectKey = project.project_key || project.projectKey || project.projectId;
+                    // All items for this project
+                    const itemsForProject = inventoryItems.filter(item =>
+                        item.project_key === projectKey ||
+                        item.projectKey === projectKey ||
+                        item.projectId === projectKey
+                    );
+                    // Total = sum of squareft for all items
+                    const total = itemsForProject.reduce((sum, i) => sum + Number(i.squareft || 0), 0);
+                    // Received = sum of squareft for Inventory and Shipping items
+                    const received = itemsForProject.filter(i => i.type === 'Inventory' || i.type === 'Shipping')
+                        .reduce((sum, i) => sum + Number(i.squareft || 0), 0);
+                    // Balance = total - received
+                    const balance = total - received;
+                    totalSqFt += total;
+                    receivedSqFt += received;
+                    balanceSqFt += balance;
                     const row = document.createElement('tr');
-                    row.dataset.projectKey = project.project_key || '';
+                    row.dataset.projectKey = projectKey;
                     row.innerHTML =
                         `<td><strong>${project.customer || ''}</strong></td>
-                        <td>${project.projectName || project.project_key || ''}</td>
-                        <td>${Number(project.total || 0).toFixed(2)}</td>
-                        <td>${Number(project.received || 0).toFixed(2)}</td>
-                        <td>${Number(project.balance || 0).toFixed(2)}</td>
-                        <td class="po-checkbox-cell"><input type="checkbox" class="po-checkbox" onchange="togglePOCheckbox(this, '${project.project_key || ''}')" ${project.poChecked ? 'checked' : ''}></td>
+                        <td>${project.projectName || projectKey || ''}</td>
+                        <td>${total.toFixed(2)}</td>
+                        <td>${received.toFixed(2)}</td>
+                        <td>${balance.toFixed(2)}</td>
+                        <td class="po-checkbox-cell"><input type="checkbox" class="po-checkbox" onchange="togglePOCheckbox(this, '${projectKey}')" ${project.poChecked ? 'checked' : ''}></td>
                         <td>${buildStatusSelect(project.status || '')}</td>
-                        <td style="text-align:center;"><button class="btn btn-sm btn-primary pdf-link-btn" onclick="generateReceivingPDF('${project.project_key || ''}')">PDF</button></td>`;
+                        <td class="center-cell"><button class="btn btn-sm btn-primary pdf-link-btn" onclick="generateReceivingPDF('${projectKey}')">PDF</button></td>`;
                     tbody.appendChild(row);
                     // Set the correct color class after rendering
                     const select = row.querySelector('.status-select');
                     const statusClass = getStatusClass(project.status || '');
                     if (statusClass) select.classList.add(statusClass);
-                    totalTotal += Number(project.total) || 0;
-                    totalReceived += Number(project.received) || 0;
-                    totalBalance += Number(project.balance) || 0;
                     activeProjects += 1;
                 });
 
-                document.getElementById('total-total').textContent = totalTotal.toFixed(2);
-                document.getElementById('total-received').textContent = totalReceived.toFixed(2);
-                document.getElementById('total-balance').textContent = totalBalance.toFixed(2);
+                document.getElementById('total-total').textContent = totalSqFt.toFixed(2);
+                document.getElementById('total-received').textContent = receivedSqFt.toFixed(2);
+                document.getElementById('total-balance').textContent = balanceSqFt.toFixed(2);
                 document.getElementById('active-projects-count').textContent = activeProjects;
+                document.getElementById('total-daily').textContent = dailyReceived.toFixed(2);
 
                 if (projects.length === 0) {
                     const row = document.createElement('tr');
@@ -420,22 +696,18 @@
                 const list = document.getElementById('receiving-reports-list');
                 list.innerHTML = '';
                 if (!files.length) {
-                    list.innerHTML = '<li style="color:#111; font-size:1.05rem;">No reports found</li>';
+                    list.innerHTML = '<li class="list-item-default">No reports found</li>';
                     return;
                 }
                 files.forEach(filename => {
                     const li = document.createElement('li');
-                    li.style.marginBottom = '0.25rem';
+                    li.classList.add('list-item-margin');
                     // PDF link (no icon)
                     const link = document.createElement('a');
                     link.href = `/rreport/${encodeURIComponent(filename)}`;
                     link.textContent = filename;
                     link.target = '_blank';
-                    link.style.textDecoration = 'none';
-                    link.style.color = '#0d6efd'; // Standard hyperlink blue
-                    link.style.fontSize = '1.05rem'; // Increased by 1pt
-                    link.onmouseover = () => link.style.textDecoration = 'underline';
-                    link.onmouseout = () => link.style.textDecoration = 'none';
+                    link.className = 'pdf-link';
                     li.appendChild(link);
 
                     // Trash icon
@@ -459,7 +731,7 @@
                 });
             } catch (err) {
                 const list = document.getElementById('receiving-reports-list');
-                list.innerHTML = `<li style="color:#b71c1c; font-size:1.05rem;">Error loading reports</li>`;
+                list.innerHTML = `<li class="list-item-error">Error loading reports</li>`;
             }
         }
 
@@ -471,12 +743,12 @@
                 const list = document.getElementById('po-list');
                 list.innerHTML = '';
                 if (!files.length) {
-                    list.innerHTML = '<li style="color:#111; font-size:1.05rem;">No purchase orders found</li>';
+                    list.innerHTML = '<li class="list-item-default">No purchase orders found</li>';
                     return;
                 }
                 files.forEach(filename => {
                     const li = document.createElement('li');
-                    li.style.marginBottom = '0.25rem';
+                    li.classList.add('list-item-margin');
                     // PDF link (no icon)
                     const link = document.createElement('a');
                     link.href = `/po/${encodeURIComponent(filename)}`;
@@ -510,7 +782,7 @@
                 });
             } catch (err) {
                 const list = document.getElementById('po-list');
-                list.innerHTML = `<li style="color:#b71c1c; font-size:1.05rem;">Error loading purchase orders</li>`;
+                list.innerHTML = `<li class="list-item-error">Error loading purchase orders</li>`;
             }
         }
 

@@ -169,6 +169,7 @@ export async function updateProjectList() {
     const response = await fetch('/api/projects');
     if (!response.ok) throw new Error('Failed to fetch project list');
     const projects = await response.json();
+    console.log('Fetched projects for sidebar:', projects);
     const projectList = document.getElementById('projectList');
     projectList.innerHTML = '';
     // Sort projects alphabetically by customer name, then by project name

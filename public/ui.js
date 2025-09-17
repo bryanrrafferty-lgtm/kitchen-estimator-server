@@ -1,3 +1,39 @@
+// Show a user-friendly error modal for critical failures
+export function showErrorModal(message, title = 'Error') {
+    let modalEl = document.getElementById('criticalErrorModal');
+    if (!modalEl) {
+        modalEl = document.createElement('div');
+        modalEl.id = 'criticalErrorModal';
+        modalEl.innerHTML = `
+            <div class="modal fade" tabindex="-1" aria-labelledby="criticalErrorLabel" aria-modal="true" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title" id="criticalErrorLabel">${title}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-danger" role="alert">${message}</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modalEl);
+    } else {
+        modalEl.querySelector('.modal-title').textContent = title;
+        modalEl.querySelector('.alert').textContent = message;
+    }
+    const modal = new bootstrap.Modal(modalEl.querySelector('.modal'));
+    modal.show();
+    modalEl.addEventListener('hidden.bs.modal', () => {
+        // Optionally remove modal from DOM after close
+        // document.body.removeChild(modalEl);
+    }, { once: true });
+}
 // UI helpers: modals, toasts, confirmation dialogs
 export function showMessage(message, type = 'info', duration = 3500) {
     // type: 'info', 'success', 'error'
