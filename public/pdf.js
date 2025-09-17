@@ -133,21 +133,24 @@ export async function printBarcodeLabels(type) {
                 doc.setFontSize(24);
                 doc.text(`ITEM # ${item.itemNumber ? item.itemNumber.toUpperCase() : ''}`, 0.5, 2, { maxWidth: 3 });
 
+                // Move all following lines down by 0.5 units
+                const yOffset = 0.5;
+
                 // Project name on the next line, flush left
                 doc.setFontSize(24);
-                doc.text(`${item.projectName ? item.projectName.toUpperCase() : ''}`, 0.5, 2.5, { maxWidth: 3 });
+                doc.text(`${item.projectName ? item.projectName.toUpperCase() : ''}`, 0.5, (2.5 + yOffset) - 0.5, { maxWidth: 3 });
 
                 // Customer name in bold above supplier
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(16);
-                doc.text(`${item.customer ? item.customer.toUpperCase() : ''}`, 0.5, 3.0, { maxWidth: 3 });
+                doc.text(`${item.customer ? item.customer.toUpperCase() : ''}`, 0.5, 3.0 + yOffset, { maxWidth: 3 });
 
                 // Set font and size ONCE for all the following lines
                 doc.setFont('helvetica', 'normal');
                 doc.setFontSize(12);
 
                 // Reduce line spacing by half for these lines
-                const baseY = 3.25;
+                const baseY = 3.25 + yOffset;
                 const lineSpacing = 0.25;
 
                 // Supplier
