@@ -10,9 +10,9 @@
 </head>
 <body>
     <!-- Modals Section: Only one instance of each modal below -->
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-3 sidebar">
+  <div class="container-fluid">
+    <div class="d-flex" style="height: 100vh;">
+      <div class="sidebar sidebar-wide">
                 
                 <div class="d-flex align-items-center mb-section margin-top-neg">
                     <img src="CKS Logo.png" alt="CKS Logo" class="cks-logo mb-2 logo-spacing">
@@ -43,8 +43,8 @@
                 <input type="file" id="csvFile" class="form-control mt-3" accept=".csv" title="Choose a CSV file to import">
                 <button class="btn btn-primary mt-2" onclick="importCsv(event)">Import CSV</button>
             </div>
-            <div class="col-md-9">
-                <ul class="nav nav-tabs mb-section">
+            <div class="main-content flex-grow-1" style="min-width:0;">
+                <ul class="nav nav-tabs mb-section tabs-offset">
                     <li class="nav-item">
                         <a class="nav-link active" href="#projectDetails" data-bs-toggle="tab">Customer Info</a>
                     </li>

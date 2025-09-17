@@ -11,17 +11,17 @@ export function createPDFHeader(doc, customer, project, additionalLines = []) {
     doc.text('Surprise, AZ 85379', 30, 26);
 
     // Customer info box (shaded)
-    let y = 16;
+    let y = 21;
     // PMS 872 gold at 30% print strength: RGB(205, 191, 170)
         doc.setFillColor(205, 191, 170);
     const leftMargin = 120;
-        doc.roundedRect(leftMargin, y, 70, 28, 3, 3, 'F');
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(11);
-        doc.text(customer || '', leftMargin + 35, y + 7, { align: 'center' });
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(9);
-        let infoY = y + 13;
+    doc.roundedRect(leftMargin, y, 70, 28, 3, 3, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text(customer || '', leftMargin + 35, y + 12, { align: 'center' });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    let infoY = y + 18;
         additionalLines.forEach(line => {
             if (line) {
                 doc.text(line, leftMargin + 35, infoY, { align: 'center' });

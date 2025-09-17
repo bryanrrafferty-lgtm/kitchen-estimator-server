@@ -1,3 +1,25 @@
+.tabs-offset {
+    margin-top: 25px !important;
+    margin-left: 50px !important;
+}
+.main-content {
+    flex-grow: 1;
+    min-width: 0;
+    width: auto;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.container-fluid {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.sidebar.sidebar-wide {
+    width: 400px !important;
+    min-width: 400px !important;
+    max-width: 400px !important;
+}
+/* Wider sidebar for Inventory Management System */
+
 /* Sidebar section card style for white window background */
 .sidebar-section {
     background: #fff;
@@ -8,12 +30,18 @@
     width: 356px;
 }
 
-/* Make sidebar scrollable */
 .sidebar {
     max-height: 100vh;
     overflow-y: auto;
     padding-right: 8px;
-    width: 356px;
+    width: 400px !important;
+    min-width: 400px !important;
+    max-width: 400px !important;
+    background: #f4f7fa !important;
+    border-right: 1px solid #e0e4ea;
+    min-height: 100vh;
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
 }
 /* Sidebar Totals and Dropzone Styles from whiteboard.html */
 .sidebar-totals {

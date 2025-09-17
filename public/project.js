@@ -36,8 +36,34 @@ export async function deleteProject(projectKey) {
 }
 // Project CRUD, sidebar updates
 export async function saveNewProject() {
-    // ...existing code from main.js...
-    // (Move the full saveNewProject implementation here)
+    const customer = document.getElementById('newCustomer').value.trim();
+    const projectName = document.getElementById('newProjectName').value.trim();
+    if (!customer) {
+        window.showMessage('Customer is required.', 'error');
+        return;
+    }
+    if (!projectName) {
+        window.showMessage('Project Name is required.', 'error');
+        return;
+    }
+    try {
+        const response = await fetch('/api/projects', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ customer, projectName })
+        });
+        if (!response.ok) throw new Error('Failed to create project');
+        window.showMessage('Project created successfully.', 'success');
+        // Optionally update project list and close modal
+        if (window.updateProjectList) await window.updateProjectList();
+        const modalEl = document.getElementById('newProjectModal');
+        if (modalEl) {
+            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            modal.hide();
+        }
+    } catch (err) {
+        window.showMessage('Failed to create project: ' + err.message, 'error');
+    }
 }
 
 export function saveProjectDetails() {
