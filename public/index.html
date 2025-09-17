@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CKS Inventory Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,500,700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Modals Section: Only one instance of each modal below -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 sidebar">
+                
+                <div class="d-flex align-items-center mb-section margin-top-neg">
+                    <img src="CKS Logo.png" alt="CKS Logo" class="cks-logo mb-2 logo-spacing">
+                    <h3 class="mb-0 logo-title">
+                        <span class="ims-span">Inventory Management System</span>
+                    </h3>
+                </div>
+                <h5>Saved Projects</h5>
+                <ul id="projectList" class="list-group mb-section"></ul>
+                <div class="mb-section">
+                    <div class="mb-subsection">
+                        <label class="form-label fw-bold">Total</label>
+                        <div id="sidebarTotalSqFt" class="form-control bg-light"></div>
+                    </div>
+                    <div class="mb-subsection">
+                        <label class="form-label fw-bold">Received</label>
+                        <div id="sidebarReceivedSqFt" class="form-control bg-light"></div>
+                    </div>
+                    <div>
+                        <label class="form-label fw-bold">Balance</label>
+                        <div id="sidebarBalance" class="form-control bg-light"></div>
+                    </div>
+                </div>
+                <div class="sidebar-actions d-flex align-items-center">
+                    <button class="btn btn-primary me-2" onclick="openNewProjectModal()">New Project</button>
+                    <label for="csvFile" class="form-label mb-0 ms-2">Import CSV File</label>
+                </div>
+                <input type="file" id="csvFile" class="form-control mt-3" accept=".csv" title="Choose a CSV file to import">
+                <button class="btn btn-primary mt-2" onclick="importCsv(event)">Import CSV</button>
+            </div>
+            <div class="col-md-9">
+                <ul class="nav nav-tabs mb-section">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#projectDetails" data-bs-toggle="tab">Customer Info</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#receiving" data-bs-toggle="tab">Receiving</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#inventory" data-bs-toggle="tab">Inventory</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#shipping" data-bs-toggle="tab">Shipping</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="projectDetails">
+                        <div class="mb-section">
+                            <label for="customer" class="form-label required">Customer</label>
+                            <input type="text" class="form-control mb-subsection" id="customer" required>
+                            <div class="invalid-feedback"></div>
+                            <label for="projectName" class="form-label required">Project Name</label>
+                            <input type="text" class="form-control mb-subsection" id="projectName" required>
+                            <div class="invalid-feedback"></div>
+                            <label for="address" class="form-label">Address</label>
+                            <input type="text" class="form-control mb-subsection" id="address">
+                            <label for="address2" class="form-label">Address 2</label>
+                            <input type="text" class="form-control mb-subsection" id="address2">
+                            <label for="city" class="form-label">City</label>
+                            <input type="text" class="form-control mb-subsection" id="city">
+                            <label for="state" class="form-label">State</label>
+                            <input type="text" class="form-control mb-subsection" id="state">
+                            <label for="zip" class="form-label">Zip</label>
+                            <input type="text" class="form-control mb-subsection" id="zip">
+                            <label for="phone" class="form-label">Phone</label>
+                            <input type="text" class="form-control mb-subsection" id="phone">
+                            <label for="contact" class="form-label required">Contact</label>
+                            <input type="text" class="form-control mb-subsection" id="contact" required>
+                            <div class="invalid-feedback"></div>
+                            <label for="email" class="form-label required">Email</label>
+                            <input type="email" class="form-control mb-subsection" id="email" required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <button class="btn btn-primary mt-3 me-2" onclick="saveProjectDetails()">Save Project Details</button>
+                        <button class="btn btn-danger mt-3" onclick="deleteProject(selectedProjectKey)">Delete Project</button>
+                    </div>
+          <div class="tab-pane fade" id="receiving">
+            
+            <div class="table-responsive mb-section">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Supplier</th>
+                    <th>Item</th>
+                    <th>Model</th>
+                    <th class="col-qty">QTY</th>
+                    <th class="col-carton">CRTN</th>
+                    <th>LBS</th>
+                    <th>ITEM #</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="receivingTable"></tbody>
+              </table>
+            </div>
+            <nav aria-label="Receiving pagination" class="mb-section">
+              <ul class="pagination justify-content-center">
+                <li class="page-item"><button class="page-link" id="prevReceiving" onclick="prevPage('Receiving')">Previous</button></li>
+                <li class="page-item"><span class="page-link" id="pageReceiving">Page 1 of 1</span></li>
+                <li class="page-item"><button class="page-link" id="nextReceiving" onclick="nextPage('Receiving')">Next</button></li>
+              </ul>
+            </nav>
+            <button class="btn btn-primary mt-2" onclick="openAddItemModal()">Add Item</button>
+                    </div>
+                    <div class="tab-pane fade" id="inventory">
+                        
+                        <div class="table-responsive mb-section">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <label for="selectAllInventory" class="visually-hidden">Select All Inventory</label>
+                                            <input type="checkbox" id="selectAllInventory" title="Select All Inventory" onclick="selectAll('Inventory', this.checked)">
+                                        </th>
+                                        <th>Supplier</th>
+                                        <th>Item</th>
+                                        <th>Model</th>
+                                        <th class="col-qty">QTY</th>
+                                        <th class="col-carton">CRTN</th>
+                                        <th>LBS</th>
+                                        <th>ITEM #</th>
+                                        <th>Location</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventoryTable"></tbody>
+                            </table>
+                        </div>
+                        <nav aria-label="Inventory pagination" class="mb-section">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item"><button class="page-link" id="prevInventory" onclick="prevPage('Inventory')">Previous</button></li>
+                                <li class="page-item"><span class="page-link" id="pageInventory">Page 1 of 1</span></li>
+                                <li class="page-item"><button class="page-link" id="nextInventory" onclick="nextPage('Inventory')">Next</button></li>
+                            </ul>
+                        </nav>
+                        <button class="btn btn-primary mt-2 me-2" onclick="printBarcodeLabels('Inventory')">Print Barcode Label</button>
+                        <button class="btn btn-primary mt-2 me-2" onclick="openReceiptConfirmationWithSuppliers()">Receipt Confirmation</button>
+                        <button class="btn btn-primary mt-2" onclick="sendEmailNotification('Inventory')">Send Email Notification</button>
+                    </div>
+                    <div class="tab-pane fade" id="shipping">
+                        
+                        <div class="table-responsive mb-section">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <label for="selectAllShipping" class="visually-hidden">Select All Shipping</label>
+                                            <input type="checkbox" id="selectAllShipping" title="Select All Shipping" onclick="selectAll('Shipping', this.checked)">
+                                        </th>
+                                        <th>Supplier</th>
+                                        <th>Item</th>
+                                        <th>Model</th>
+                                        <th class="col-qty">QTY</th>
+                                        <th class="col-carton">CRTN</th>
+                                        <th>LBS</th>
+                                        <th>ITEM #</th>
+                                        <th>Location</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="shippingTable"></tbody>
+                            </table>
+                        </div>
+                        <nav aria-label="Shipping pagination" class="mb-section">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item"><button class="page-link" id="prevShipping" onclick="prevPage('Shipping')">Previous</button></li>
+                                <li class="page-item"><span class="page-link" id="pageShipping">Page 1 of 1</span></li>
+                                <li class="page-item"><button class="page-link" id="nextShipping" onclick="nextPage('Shipping')">Next</button></li>
+                            </ul>
+                        </nav>
+                        <button class="btn btn-primary mt-2" onclick="printPackingList('Shipping')">Print Packing List</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Item Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editItemId">
+                    <input type="hidden" id="editItemType">
+                    <div class="mb-3">
+                        <label for="editSupplier" class="form-label">Supplier</label>
+                        <input type="text" class="form-control" id="editSupplier">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editItem" class="form-label">Item</label>
+                        <input type="text" class="form-control" id="editItem">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editModel" class="form-label">Model</label>
+                        <input type="text" class="form-control" id="editModel">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editQuantity" class="form-label">Quantity</label>
+                        <input type="text" class="form-control" id="editQuantity">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="editCartonQty" class="form-label">Carton Qty</label>
+                        <input type="number" class="form-control" id="editCartonQty">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editItemNumber" class="form-label">ITEM #</label>
+                        <input type="text" class="form-control" id="editItemNumber">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editLocation" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="editLocation">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editSquareFt" class="form-label">Square Ft</label>
+              <input type="number" class="form-control" id="editSquareFt" min="0" step="any">
+            </div>
+            <div class="mb-3">
+              <label for="editWeight" class="form-label">Weight (lbs)</label>
+              <input type="number" class="form-control" id="editWeight" min="0" step="any">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveEdit()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ 
+<div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="addItemForm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addItemModalLabel">Add Inventory Item</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="addSupplier" class="form-label">Supplier</label>
+            <input type="text" class="form-control" id="addSupplier" required>
+          </div>
+          <div class="mb-3">
+            <label for="addItemType" class="form-label">Item</label>
+            <input type="text" class="form-control" id="addItemType" required>
+          </div>
+          <div class="mb-3">
+            <label for="addModelNumber" class="form-label">Model</label>
+            <input type="text" class="form-control" id="addModelNumber">
+          </div>
+          <div class="mb-3">
+            <label for="addQuantity" class="form-label">Quantity</label>
+            <input type="number" class="form-control" id="addQuantity" min="1" required>
+          </div>
+          <div class="mb-3">
+            <label for="addCartonQuantity" class="form-label">Carton Qty</label>
+            <input type="number" class="form-control" id="addCartonQuantity" min="0">
+          </div>
+          <div class="mb-3">
+            <label for="addWeight" class="form-label">Weight (lbs)</label>
+            <input type="number" class="form-control" id="addWeight" min="0" step="any">
+          </div>
+          <div class="mb-3">
+            <label for="addItemNumber" class="form-label">ITEM #</label>
+            <input type="text" class="form-control" id="addItemNumber">
+          </div>
+          <div class="mb-3">
+            <label for="addLocation" class="form-label">Location</label>
+            <input type="text" class="form-control" id="addLocation">
+          </div>
+          
+          <div class="mb-3">
+            <label for="addSquareFt" class="form-label">Square Ft</label>
+            <input type="number" class="form-control" id="addSquareFt" min="0" step="any">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Item</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+ 
+<div class="modal fade" id="newProjectModal" tabindex="-1" aria-labelledby="newProjectModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newProjectModalLabel">New Project</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <label for="newCustomer" class="form-label">Customer</label>
+        <input type="text" id="newCustomer" class="form-control mb-2" required>
+        <label for="newProjectName" class="form-label">Project Name</label>
+        <input type="text" id="newProjectName" class="form-control mb-2" required>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="saveNewProjectBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    <div class="modal fade" id="receiptConfirmationModal" tabindex="-1" aria-labelledby="receiptConfirmationModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="receiptConfirmationModalLabel">Receipt Confirmation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <label for="freightCo" class="form-label">Freight Co.</label>
+            <input type="text" id="freightCo" class="form-control mb-2">
+            <label for="cartonQty" class="form-label">Carton Qty</label>
+            <input type="number" id="cartonQty" class="form-control mb-2">
+            <label for="skidQty" class="form-label">Skid Qty</label>
+            <input type="number" id="skidQty" class="form-control mb-2">
+            <!-- Add Supplier and PO Number fields -->
+            <label for="receiptSupplier" class="form-label">Supplier</label>
+            <input type="text" id="receiptSupplier" class="form-control mb-2">
+            <label for="receiptPO" class="form-label">PO Number</label>
+            <input type="text" id="receiptPO" class="form-control mb-2">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="generateReceiptBtn">Generate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+ 
+<div class="modal fade" id="emailNotificationModal" tabindex="-1" aria-labelledby="emailNotificationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="emailNotificationModalLabel">Send Email Notification</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <label for="emailSupplier" class="form-label">Supplier</label>
+        <input type="text" id="emailSupplier" class="form-control mb-2">
+        <label for="emailPO" class="form-label">PO Number</label>
+        <input type="text" id="emailPO" class="form-control mb-2">
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="sendEmailBtn">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  
+  <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/jspdf-autotable@latest/dist/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://unpkg.com/jsbarcode@latest/dist/barcodes/JsBarcode.code128.min.js"></script>
+  <script type="module" src="main.js"></script>
+</body>
+</html>
